@@ -20,10 +20,7 @@ module "vm" {
   network_interface_id = module.network.network_interface_id
   build_server         = "build-server"
   vm_size              = "Standard_D2s_v3"
-  # admin_username       = "adminuser"
-  # public_key_path      = "./"
   public_subnet_id     = module.network.public_subnet_id
   private_subnet_id    = module.network.private_subnet_id
   virtual_network_name = module.network.virtual_network_name
 }
-

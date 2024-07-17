@@ -22,11 +22,6 @@ variable "virtual_network" {
   }
 }
 
-# variable "virtual_network_address_space" {
-#   description = "The address space for the virtual network"
-#   type        = list(string)
-# }
-
 variable "public_subnet_name" {
   description = "The name of the public subnet"
   type        = string

@@ -23,16 +23,6 @@ variable "vm_size" {
   type        = string
 }
 
-# variable "admin_username" {
-#   description = "The admin username for the virtual machine"
-#   type        = string
-# }
-
-# variable "public_key_path" {
-#   description = "The path to the SSH public key"
-#   type        = string
-# }
-
 variable "public_subnet_id" {
   description = "ID of the public subnet"
   type        = string

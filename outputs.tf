@@ -10,8 +10,6 @@ output "build_server_ip" {
   value = module.vm.build_server_ip
 }
 
-
-
 # output "virtual_network_name" {
 #   value = module.network.virtual_network_name
 # }
