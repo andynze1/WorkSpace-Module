@@ -41,6 +41,5 @@ east-us-keypair*
 backend.tf
 provider.tf
 maintfplan
-ubuntu-keypair*
-linux-keypair*
+*keypair*
 maintf.plan

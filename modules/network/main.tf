@@ -9,6 +9,9 @@ resource "azurerm_virtual_network" "virtual_network" {
   location            = var.location
   resource_group_name = azurerm_resource_group.resource_group.name
   
+  depends_on = [
+    azurerm_resource_group.resource_group
+  ]
 }
 
 resource "azurerm_subnet" "public_subnet" {
@@ -16,6 +19,9 @@ resource "azurerm_subnet" "public_subnet" {
   resource_group_name  = azurerm_resource_group.resource_group.name
   virtual_network_name = azurerm_virtual_network.virtual_network.name
   address_prefixes     = [local.public_subnet[terraform.workspace]]
+  depends_on = [
+    azurerm_virtual_network.virtual_network,
+  ]
 }
 
 resource "azurerm_subnet" "private_subnet" {
@@ -23,6 +29,9 @@ resource "azurerm_subnet" "private_subnet" {
   resource_group_name  = azurerm_resource_group.resource_group.name
   virtual_network_name = azurerm_virtual_network.virtual_network.name
   address_prefixes     = [local.private_subnet[terraform.workspace]]
+  depends_on = [
+    azurerm_virtual_network.virtual_network,
+  ]
 }
 
 resource "azurerm_network_security_group" "security_group" {
@@ -43,7 +52,20 @@ resource "azurerm_network_security_group" "security_group" {
       destination_address_prefix = "*"
     }
   }
-  depends_on = [ azurerm_resource_group.resource_group ]
+  depends_on = [
+    azurerm_virtual_network.virtual_network
+  ]
+}
+
+resource "azurerm_public_ip" "public_ip" {
+  name                = "${terraform.workspace}-public_ip"
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  allocation_method   = "Dynamic"
+
+  depends_on = [ 
+    azurerm_network_security_group.security_group,
+  ]
 }
 
 resource "azurerm_network_interface" "network_interface" {
@@ -56,27 +78,16 @@ resource "azurerm_network_interface" "network_interface" {
     subnet_id                     = azurerm_subnet.public_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
-  }
+   }
   depends_on = [ 
-    azurerm_subnet.public_subnet,
-    azurerm_resource_group.resource_group, 
+    azurerm_public_ip.public_ip 
   ]
 }
-
-resource "azurerm_public_ip" "public_ip" {
-  name                = "${terraform.workspace}-public_ip"
-  location            = azurerm_resource_group.resource_group.location
-  resource_group_name = azurerm_resource_group.resource_group.name
-  allocation_method   = "Dynamic"
-}
-
 resource "azurerm_network_interface_security_group_association" "networksgasso" {
   network_interface_id      = azurerm_network_interface.network_interface.id
   network_security_group_id = azurerm_network_security_group.security_group.id
   depends_on = [ 
-    azurerm_network_security_group.security_group,
     azurerm_network_interface.network_interface,
-    azurerm_virtual_network.virtual_network
-    ]
+  ]
 }
 

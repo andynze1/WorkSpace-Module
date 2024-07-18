@@ -32,6 +32,14 @@ locals {
     {
       priority               = 700
       destination_port_range = "80"
-    }
+    },
+    {
+      priority               = 800
+      destination_port_range = "3000"
+    },
+    {
+      priority               = 900
+      destination_port_range = "443"
+    },
   ]
 }
